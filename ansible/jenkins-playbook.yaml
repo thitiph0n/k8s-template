@@ -1,6 +1,7 @@
 ---
 - name: install jenkins on kubernetes cluster
   hosts: local-vm
+
   tasks:
     - name: copy manifest files
       copy:
