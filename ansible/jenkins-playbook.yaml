@@ -1,0 +1,23 @@
+---
+- name: install jenkins on kubernetes cluster
+  hosts: local-vm
+  tasks:
+    - name: copy manifest files
+      copy:
+        src: ../jenkins
+        dest: ~/k8s-config/
+        owner: '{{ ansible_user }}'
+        group: '{{ ansible_user }}'
+        mode: 0644
+    - name: create jenkins namespace
+      shell: microk8s kubectl create namespace jenkins
+      register: result
+    - name: print kubectl logs
+      debug:
+        msg: '{{ result.stdout }}'
+    - name: apply jenkins manifest
+      shell: microk8s kubectl -n jenkins apply -f ~/k8s-config/jenkins
+      register: result
+    - name: print kubectl logs
+      debug:
+        msg: '{{ result.stdout }}'

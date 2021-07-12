@@ -1,0 +1,45 @@
+---
+- name: install microk8s
+  hosts: local-vm
+  become: true
+  tasks:
+    - name: install microk8s with a snap
+      snap:
+        name: microk8s
+        classic: yes
+        channel: 1.21
+
+    - name: modify a user account
+      shell: usermod -a -G microk8s '{{ansible_user}}'
+    - name: change permissions of directory
+      file:
+        path: /home/{{ansible_user}}/.kube
+        owner: '{{ ansible_user }}'
+        group: '{{ ansible_user }}'
+        recurse: yes
+        force: yes
+
+    - name: wait for microk8s ready
+      shell: microk8s status --wait-ready
+      register: ready
+    - name: check node is installed
+      debug:
+        msg: 'install successful'
+
+    - name: enable add-ons
+      shell: microk8s enable dns helm3
+
+    - name: add microk8s kubectl aliases
+      lineinfile:
+        dest: '/home/{{ansible_user}}/.bash_aliases'
+        create: yes
+        mode: 0644
+        line: 'alias kubectl="microk8s kubectl"'
+        regexp: '^alias kubectl='
+
+    - name: check node is up and running
+      shell: microk8s kubectl get nodes
+      register: result
+    - name: print out node
+      debug:
+        msg: '{{ result.stdout }}'
