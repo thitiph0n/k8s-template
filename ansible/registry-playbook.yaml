@@ -1,0 +1,24 @@
+---
+- name: install jenkins on kubernetes cluster
+  hosts: local-vm
+
+  tasks:
+    - name: copy manifest files
+      copy:
+        src: ../registry
+        dest: ~/k8s-config/
+        owner: '{{ ansible_user }}'
+        group: '{{ ansible_user }}'
+        mode: 0644
+    - name: create local-registry namespace
+      shell: microk8s kubectl create namespace local-registry --dry-run=client -o yaml | microk8s kubectl apply -f -
+      register: result
+    - name: print kubectl logs
+      debug:
+        msg: '{{ result.stdout }}'
+    - name: apply local-registry manifest
+      shell: microk8s kubectl -n local-registry apply -f ~/k8s-config/registry
+      register: result
+    - name: print kubectl logs
+      debug:
+        msg: '{{ result.stdout }}'

@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: registry
   namespace: local-registry
@@ -23,13 +23,24 @@ spec:
       containers:
         - name: registry
           image: registry:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
-            - containerPort: 5000
+            - name: registry
+              containerPort: 5000
               protocol: TCP
           volumeMounts:
             - mountPath: /var/lib/registry
               name: registry
+            - mountPath: '/etc/docker/registry'
+              name: 'config'
+          livenessProbe:
+            httpGet:
+              path: /v2/
+              port: registry
+          readinessProbe:
+            httpGet:
+              path: /v2/
+              port: registry
       restartPolicy: Always
       securityContext:
         runAsUser: 0
@@ -38,3 +49,7 @@ spec:
         - name: registry
           persistentVolumeClaim:
             claimName: registry-claim
+        - name: config
+          configMap:
+            defaultMode: 420
+            name: docker-registry

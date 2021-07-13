@@ -4,10 +4,7 @@
   become: true
   tasks:
     - name: install microk8s with a snap
-      snap:
-        name: microk8s
-        classic: yes
-        channel: 1.21
+      shell: snap install microk8s --classic --channel=1.21/stable
 
     - name: modify a user account
       shell: usermod -a -G microk8s '{{ansible_user}}'
@@ -30,7 +27,7 @@
         msg: 'install successful'
 
     - name: enable add-ons
-      shell: microk8s enable dns helm3
+      shell: microk8s enable dns ingress
 
     - name: add microk8s kubectl aliases
       lineinfile:
