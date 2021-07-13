@@ -19,6 +19,9 @@
         recurse: yes
         force: yes
 
+    - name: reset ssh connection
+      meta: reset_connection
+
     - name: wait for microk8s ready
       shell: microk8s status --wait-ready
       register: ready

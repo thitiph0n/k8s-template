@@ -10,7 +10,13 @@
 sudo nano /etc/ansible/hosts
 ```
 
-```bash
-[local-vm]
-mars ansible_host=<<ip address>> ansible_connection=ssh ansible_ssh_user=<<user>> ansible_ssh_pass=<<password>>
+```
+[GROUP]
+<<host name>> ansible_host=<<ip address>> ansible_connection=ssh ansible_ssh_user=<<user>> ansible_ssh_pass=<<password>>
+```
+
+## Command to run playbook
+
+```
+ansible-playbook <<file>> -K
 ```
