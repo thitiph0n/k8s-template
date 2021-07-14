@@ -20,3 +20,20 @@ spec:
       targetPort: 8080
   selector:
     app: jenkins
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-np
+  namespace: jenkins
+  labels:
+    app: jenkins
+spec:
+  type: NodePort
+  ports:
+    - name: jenkins-ui
+      port: 8080
+      nodePort: 31080
+      protocol: TCP
+  selector:
+    app: jenkins
