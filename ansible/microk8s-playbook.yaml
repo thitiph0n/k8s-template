@@ -27,7 +27,7 @@
         msg: 'install successful'
 
     - name: enable add-ons
-      shell: microk8s enable dns ingress
+      shell: microk8s enable dns
 
     - name: add microk8s kubectl aliases
       lineinfile:
