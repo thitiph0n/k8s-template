@@ -11,7 +11,7 @@
         group: '{{ ansible_user }}'
         mode: 0644
     - name: create jenkins namespace
-      shell: microk8s kubectl create namespace jenkins
+      shell: microk8s kubectl create namespace jenkins --dry-run=client -o yaml | microk8s kubectl apply -f -
       register: result
     - name: print kubectl logs
       debug:
