@@ -1,0 +1,24 @@
+---
+- name: deploy web on kubernetes cluster
+  hosts: local-vm
+
+  tasks:
+    - name: copy manifest files
+      copy:
+        src: ../web
+        dest: ~/k8s-config/
+        owner: '{{ ansible_user }}'
+        group: '{{ ansible_user }}'
+        mode: 0644
+    - name: create web namespace
+      shell: microk8s kubectl create namespace web --dry-run=client -o yaml | microk8s kubectl apply -f -
+      register: result
+    - name: print kubectl logs
+      debug:
+        msg: '{{ result.stdout }}'
+    - name: apply web manifest
+      shell: microk8s kubectl -n web apply -f ~/k8s-config/web
+      register: result
+    - name: print kubectl logs
+      debug:
+        msg: '{{ result.stdout }}'
